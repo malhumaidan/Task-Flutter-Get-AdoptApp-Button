@@ -6,10 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    List<Pet> pets = Provider.of<PetsProvider>(context, listen: false).pets;
+    List<Pet> pets = context.watch<PetsProvider>().pets;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pet Adopt"),
@@ -21,7 +22,9 @@ class HomePage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<PetsProvider>().loadPets();
+                },
                 child: const Padding(
                   padding: EdgeInsets.all(12.0),
                   child: Text("Get All pets"),
@@ -39,15 +42,21 @@ class HomePage extends StatelessWidget {
               ),
             ),
             GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: MediaQuery.of(context).size.width /
-                      (MediaQuery.of(context).size.height),
-                ),
-                physics: const NeverScrollableScrollPhysics(), // <- Here
-                itemCount: pets.length,
-                itemBuilder: (context, index) => PetCard(pet: pets[index])),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: MediaQuery.of(context).size.width /
+                    (MediaQuery.of(context).size.height),
+              ),
+              physics: const NeverScrollableScrollPhysics(), // <- Here
+              itemCount: pets.length,
+              itemBuilder: (context, index) {
+                // var petsProvider = context.watch<PetsProvider>();
+                // var providerPet = petsProvider.pets[index];
+
+                return PetCard(pet: pets[index]);
+              },
+            )
           ],
         ),
       ),
